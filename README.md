@@ -8,7 +8,7 @@
 
 QNotified 是一个旨在使QQ变得更好用的开源Xposed模块
 
-## QNotified
+## QNotified Fix Card
 
 **[持续集成版本下载](https://install.appcenter.ms/orgs/qnotifieddev/apps/qnotified/distribution_groups/alpha)**
 
