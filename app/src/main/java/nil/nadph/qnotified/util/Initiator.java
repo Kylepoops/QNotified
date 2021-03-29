@@ -25,6 +25,9 @@ import static nil.nadph.qnotified.util.Utils.PACKAGE_NAME_QQ;
 import static nil.nadph.qnotified.util.Utils.loge;
 
 import android.os.Parcelable;
+
+import me.singleneuron.qn_kernel.data.HostInformationProviderKt;
+import me.singleneuron.util.QQVersion;
 import mqq.app.AppRuntime;
 
 @SuppressWarnings("rawtypes")
@@ -84,6 +87,7 @@ public class Initiator {
                     tmp = load("cooperation.vip.qqbanner.QbossADImmersionBannerManager$2");
                 }
                 mQbossADImmersionBannerManager = tmp.getDeclaredField("this$0").getType();
+                return mQbossADImmersionBannerManager;
             } catch (Exception ignored) {
             }
         }
@@ -96,6 +100,7 @@ public class Initiator {
                     tmp = load("cooperation.vip.qqbanner.manager.VasADImmersionBannerManager$2");
                 }
                 mQbossADImmersionBannerManager = tmp.getDeclaredField("this$0").getType();
+                return mQbossADImmersionBannerManager;
             } catch (Exception ignored) {
             }
         }
@@ -108,6 +113,7 @@ public class Initiator {
                     tmp = load("cooperation.vip.qqbanner.manager.VasADImmersionBannerManager$2");
                 }
                 mQbossADImmersionBannerManager = tmp.getDeclaredField("this$0").getType();
+                return mQbossADImmersionBannerManager;
             } catch (Exception ignored) {
             }
         }
@@ -159,32 +165,21 @@ public class Initiator {
 
     public static Class _GdtMvViewController() {
         Class tmp;
-        Class mGdtMvViewController = load("com.tencent.gdtad.api.motivevideo.GdtMvViewController");
+        String clzName = "com.tencent.gdtad.api.motivevideo.GdtMvViewController";
+        if (HostInformationProviderKt.requireMinQQVersion(QQVersion.QQ_8_6_0)) {
+            clzName = "com.tencent.gdtad.basics.motivevideo.GdtMvViewController";
+        }
+        Class mGdtMvViewController = load(clzName);
         if (mGdtMvViewController == null) {
             try {
-                tmp = load("com.tencent.gdtad.api.motivevideo.GdtMvViewController$6");
+                tmp = load(clzName + "$6");
                 mGdtMvViewController = tmp.getDeclaredField("this$0").getType();
             } catch (Exception ignored) {
             }
         }
         if (mGdtMvViewController == null) {
             try {
-                tmp = load("com.tencent.gdtad.api.motivevideo.GdtMvViewController$8");
-                mGdtMvViewController = tmp.getDeclaredField("this$0").getType();
-            } catch (Exception ignored) {
-            }
-        }
-        mGdtMvViewController = load("com.tencent.gdtad.basics.motivevideo.GdtMvViewController");
-        if (mGdtMvViewController == null) {
-            try {
-                tmp = load("com.tencent.gdtad.basics.motivevideo.GdtMvViewController$6");
-                mGdtMvViewController = tmp.getDeclaredField("this$0").getType();
-            } catch (Exception ignored) {
-            }
-        }
-        if (mGdtMvViewController == null) {
-            try {
-                tmp = load("com.tencent.gdtad.basics.motivevideo.GdtMvViewController$8");
+                tmp = load(clzName + "$8");
                 mGdtMvViewController = tmp.getDeclaredField("this$0").getType();
             } catch (Exception ignored) {
             }

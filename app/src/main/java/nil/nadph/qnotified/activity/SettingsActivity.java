@@ -23,6 +23,7 @@ package nil.nadph.qnotified.activity;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static me.ketal.util.PlayQQVersion.PlayQQ_8_2_9;
 import static me.singleneuron.util.KotlinUtilsKt.addViewConditionally;
 import static me.singleneuron.util.QQVersion.QQ_8_2_6;
 import static nil.nadph.qnotified.ui.ViewBuilder.R_ID_DESCRIPTION;
@@ -105,7 +106,6 @@ import ltd.nextalone.hook.SimplifyRecentDialog;
 import me.ketal.hook.ShowMsgAt;
 import me.ketal.ui.activity.ModifyLeftSwipeReplyActivity;
 import me.ketal.hook.ChatItemShowQQUin;
-import me.ketal.hook.FakeBalance;
 import me.ketal.hook.HideFriendCardSendGift;
 import me.ketal.hook.LeftSwipeReplyHook;
 import me.ketal.hook.MultiActionHook;
@@ -113,8 +113,6 @@ import me.ketal.hook.QWalletNoAD;
 import me.ketal.hook.QZoneNoAD;
 import me.ketal.hook.SendFavoriteHook;
 import me.ketal.hook.SortAtPanel;
-import me.kyuubiran.hook.AutoMosaicName;
-import me.kyuubiran.hook.ShowSelfMsgByLeft;
 import me.singleneuron.activity.ChangeDrawerWidthActivity;
 import me.singleneuron.hook.ForceSystemAlbum;
 import me.singleneuron.hook.ForceSystemCamera;
@@ -199,7 +197,7 @@ public class SettingsActivity extends IphoneTitleBarActivityCompat implements Ru
         ll.addView(newListItemButton(this, "Omega测试性功能", "这是个不存在的功能", null,
             v -> KotlinUtilsKt.showEulaDialog(SettingsActivity.this)));
         ll.addView(subtitle(this, "基本功能"));
-        if (HostInformationProviderKt.requireMinQQVersion(QQ_8_2_6)) {
+        if (HostInformationProviderKt.requireMinQQVersion(QQ_8_2_6) || HostInformationProviderKt.requireMinPlayQQVersion(PlayQQ_8_2_9)) {
             ll.addView(_t = newListItemButton(this, "自定义电量", "[QQ>=8.2.6]在线模式为我的电量时生效", "N/A",
                 clickToProxyActAction(FakeBatCfgActivity.class)));
             __tv_fake_bat_status = _t.findViewById(R_ID_VALUE);
@@ -259,6 +257,8 @@ public class SettingsActivity extends IphoneTitleBarActivityCompat implements Ru
             newListItemHookSwitchInit(this, "显示设置禁言的管理", "即使你只是普通群成员", GagInfoDisclosure.INSTANCE));
         addViewConditionally(ll, this, "小程序分享转链接（发送）", "感谢Alcatraz323开发远离小程序,神经元移植到Xposed",
             NoApplet.INSTANCE);
+        ll.addView(newListItemButton(this, "娱乐功能", null, null,
+            clickToProxyActAction(AmusementActivity.class)));
         ll.addView(subtitle(this, "实验性功能(未必有效)"));
         ll.addView(
             _t = newListItemButton(this, "下载重定向", "N/A", "N/A", this::onFileRecvRedirectClick));
@@ -269,10 +269,6 @@ public class SettingsActivity extends IphoneTitleBarActivityCompat implements Ru
             this::onAddAccountClick));
         ll.addView(newListItemHookSwitchInit(this, "屏蔽小程序广告", "需要手动关闭广告, 请勿反馈此功能无效",
             RemoveMiniProgramAd.INSTANCE));
-        ll.addView(
-            newListItemHookSwitchInit(this, "昵称/群名字打码", "娱乐功能 不进行维护", AutoMosaicName.INSTANCE));
-        ll.addView(newListItemHookSwitchInit(this, "自己的消息和头像居左显示", "娱乐功能 不进行维护",
-            ShowSelfMsgByLeft.INSTANCE));
         ll.addView(newListItemConfigSwitchIfValid(this, "收藏更多表情", "[暂不支持>=8.2.0]保存在本地",
             FavMoreEmo.INSTANCE));
         ll.addView(newListItemHookSwitchInit(this, "屏蔽更新提醒", null, PreUpgradeHook.INSTANCE));
@@ -332,8 +328,6 @@ public class SettingsActivity extends IphoneTitleBarActivityCompat implements Ru
             newListItemConfigSwitchIfValid(this, "发送收藏消息添加分组", null, SendFavoriteHook.INSTANCE));
         ll.addView(newListItemConfigSwitchIfValid(this, "隐藏空间好友热播和广告", null, QZoneNoAD.INSTANCE));
         ll.addView(newListItemConfigSwitchIfValid(this, "隐藏QQ钱包超值精选", null, QWalletNoAD.INSTANCE));
-        ll.addView(
-            newListItemButton(this, "自定义钱包余额", "仅供娱乐", null, FakeBalance.INSTANCE.listener()));
         ll.addView(newListItemConfigSwitchIfValid(this, "消息显示发送者QQ号和时间", null,
             ChatItemShowQQUin.INSTANCE));
         ll.addView(newListItemConfigSwitchIfValid(this, "消息显示At对象", null, ShowMsgAt.INSTANCE));
@@ -474,22 +468,6 @@ public class SettingsActivity extends IphoneTitleBarActivityCompat implements Ru
                         .getHostName()
                         + "(太/无极阴,应用转生,天鉴等虚拟框架)或者重启手机(EdXp, Xposed, 太极阳), 如果重启手机后问题仍然存在, 请向作者反馈, 并提供详细日志")
                 .show();
-        }
-        ConfigManager cfg = ConfigManager.getDefaultConfig();
-        if (HostInformationProviderKt.getHostInfo().isPlayQQ() && !cfg
-            .getBooleanOrFalse("isShowPlayQQTip")) {
-            CustomDialog.createFailsafe(this).setTitle("警告")
-                .setPositiveButton("我已了解后果并愿意继续使用", (dialog, which) -> {
-                    cfg.putBoolean("isShowPlayQQTip", true);
-                    try {
-                        cfg.save();
-                    } catch (IOException ignored) {
-                    }
-                })
-                .setMessage(
-                    "你正在使用Play版QQ，该版本QQ版本号与国内版有很大区别，QNotified的部分功能的版本适配依赖软件版本号，可能会出现预想不到的情况，且任何play版本都未进行测试。")
-                .show();
-
         }
         return true;
     }
