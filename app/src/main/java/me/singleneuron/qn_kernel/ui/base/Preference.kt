@@ -20,36 +20,24 @@
  * <https://github.com/ferredoxin/QNotified/blob/master/LICENSE.md>.
  */
 
-package me.singleneuron.qn_kernel.`interface`.ui
+package me.singleneuron.qn_kernel.ui.base
 
-interface FunctionUIInterface {
+import android.content.Context
 
-    val name: String
-    val description: String
-    val value: String?
-        get() = null
-
-    val extraSearchWords: Array<String>
-        get() = emptyArray()
-
-    fun getSupportedVersions(
-        versions: Array<Long> = emptyArray(),
-        versionRanges: Array<LongRange> = emptyArray()
-    )
-
-    val isRuntimeSupport: Boolean
-        get() = false
-
+interface UiPreference : UiDescription {
+    var title: String
+    var summary: String?
+    var onClickListener: (Context) -> Boolean
 }
 
-interface FunctionUIClickableInterface : FunctionUIInterface {
-
-    val onClick: () -> Boolean
-
+interface UiChangeablePreference<T> : UiPreference {
+    var onPreferenceChangeListener: (T) -> Boolean
+    var getValue: () -> T?
 }
 
-interface FunctionUISwitchInterface : FunctionUIInterface {
-
-    val onStatusChanged: (isEnable: Boolean) -> Unit
-
+interface UiSwitchPreference : UiChangeablePreference<Boolean> {
+    var valid: Boolean
 }
+
+interface UiEditTextPreference : UiChangeablePreference<String>
+

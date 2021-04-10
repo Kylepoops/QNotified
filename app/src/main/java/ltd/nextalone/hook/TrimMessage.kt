@@ -19,24 +19,27 @@
  * <https://www.gnu.org/licenses/>
  * <https://github.com/ferredoxin/QNotified/blob/master/LICENSE.md>.
  */
-package me.singleneuron.base.decorator
 
-import android.content.Intent
-import de.robv.android.xposed.XC_MethodHook
-import nil.nadph.qnotified.util.Utils
+package ltd.nextalone.hook
 
-abstract class BaseStartActivityHookDecorator(cfg: String) : BaseDecorator(cfg) {
+import ltd.nextalone.util.hookBefore
+import ltd.nextalone.util.method
+import ltd.nextalone.util.tryOrFalse
+import nil.nadph.qnotified.base.annotation.FunctionEntry
+import nil.nadph.qnotified.hook.CommonDelayableHook
+import nil.nadph.qnotified.util.Initiator
 
-    fun decorate(intent: Intent, param: XC_MethodHook.MethodHookParam): Boolean {
-        if (!checkEnabled()) return false
-        return try {
-            doDecorate(intent, param)
-        } catch (e: Exception) {
-            Utils.log(e)
-            false
+@FunctionEntry
+object TrimMessage : CommonDelayableHook("na_trim_message") {
+    override fun initOnce(): Boolean = tryOrFalse {
+        Initiator._ChatActivityFacade().method(
+            "a",
+            6,
+            LongArray::class.java
+        )?.hookBefore(this) {
+            var msg = it.args[3] as String
+            msg = msg.trim()
+            it.args[3] = msg
         }
     }
-
-    protected abstract fun doDecorate(intent: Intent, param: XC_MethodHook.MethodHookParam): Boolean
-
 }
